@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import firebase from 'firebase/compat/app';
+import firebase from "firebase/compat/app";
 import ChatMessage from "./ChatMessage";
 
-import { auth, firestore } from "../App"; 
+import { auth, firestore } from "../App";
 
 function ChatRoom() {
+  const dummy = useRef();
   const messagesRef = firestore.collection("messages");
   const query = messagesRef.orderBy("createdAt").limit(25);
 
@@ -22,15 +23,17 @@ function ChatRoom() {
       photoURL,
     });
     setInputValue("");
+    dummy.current.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <>
+    <main>
       <div>
         {messages &&
           messages.map((msg) => {
             return <ChatMessage key={msg.id} message={msg} />;
           })}
+        <span ref={dummy}></span>
 
         <form onSubmit={sendMessage}>
           <input
@@ -38,11 +41,12 @@ function ChatRoom() {
             onChange={(e) => {
               setInputValue(e.target.value);
             }}
+            placeholder="say something nice"
           />
-          <button type="submit">Envoyer</button>
+          <button type="submit" disabled={!inputValue}>Envoyer</button>
         </form>
       </div>
-    </>
+    </main>
   );
 }
 
