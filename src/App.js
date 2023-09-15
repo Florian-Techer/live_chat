@@ -1,11 +1,15 @@
 import "./App.css";
 
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+
+import ChatRoom from "./components/ChatRoom";
+import SignIn from "./components/SignIn";
+import SignOut from "./components/SignOut";
 
 firebase.initializeApp({
   apiKey: "AIzaSyCxjwiEmxk0i4f7SjLqL3Dk5aD1P7HD_bE",
@@ -18,14 +22,24 @@ firebase.initializeApp({
 });
 
 const auth = firebase.auth();
-const store = firebase.firestore();
+const firestore = firebase.firestore();
 
 function App() {
+
+  const [user] = useAuthState(auth)
+
   return (
     <div className="App">
-      <header className="App-header"></header>
+      <header>
+        <h1>⚛️🔥💬</h1>
+        <SignOut />
+      </header>
+      <section>
+        {user ? <ChatRoom /> : <SignIn />}
+      </section>
     </div>
   );
 }
 
 export default App;
+export { auth, firestore };
